@@ -1,6 +1,5 @@
 import { mainDb } from "../../lib/database";
 import UserRepository from "./user-repository";
-import fs from "fs";
 
 class UserController {
   constructor() {
