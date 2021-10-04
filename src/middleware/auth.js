@@ -1,24 +1,27 @@
 import jwt from "jsonwebtoken";
-import { JWT } from "../lib/generateToken";
+import { JWT } from "../lib/secretKey";
 
-export const verify = (res, req, next) => {
+export const verify = (req, res, next) => {
   try {
     const token = req.headers.authorization || "";
     let jwtPayload;
+    // pengecekan token jwt valid atau tidak
     try {
       jwtPayload = jwt.verify(token, JWT.secretKey);
       req.user = jwtPayload;
       next();
-    } catch (error) {
-      return res.status(400).send({ message: "Not Authorized" });
+    } catch (err) {
+      console.log(err);
+      res.status(400).send({ message: "Not authorized" });
     }
+
     const newToken = jwt.sign(jwtPayload, JWT.secretKey, {
       expiresIn: "12h",
     });
-    return res.setHeader("token", newToken);
+    res.setHeader("token", newToken);
     next();
     return;
-  } catch (error) {
-    return error;
+  } catch (err) {
+    return err;
   }
 };

@@ -58,9 +58,7 @@ class AuthController {
 
       // Check Email from DB
       const checkUser = await this.db.oneOrNone(
-        `
-                SELECT * FROM users WHERE email = $1
-            `,
+        `SELECT * FROM users WHERE email = $1`,
         body.email
       );
       // Check Email if not exists
