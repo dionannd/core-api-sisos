@@ -7,14 +7,31 @@ class PostingController {
     this.repository = new PostingRepository();
   }
 
+  getUserPosting = async (req, res) => {
+    try {
+      const session = req.user.id;
+      const result = await this.repository.getPosting(this.db, session);
+      const mapResult = result.map((item) => {
+        return {
+          ...item,
+          image: `http://localhost:8000/image_posting/${item.image}`,
+        };
+      });
+      return res.status(200).send({ data: mapResult });
+    } catch (error) {
+      return res.status(500).send({ message: error.message });
+    }
+  };
+
   createPosting = async (req, res) => {
     try {
       const session = req.user;
-      const { body } = req;
+      const { body, file } = req;
       const result = await this.repository.createPosting(
         this.db,
         session,
-        body
+        body,
+        file
       );
 
       return res.status(200).send({ message: "ok", data: result });

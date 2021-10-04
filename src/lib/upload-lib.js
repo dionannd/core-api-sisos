@@ -1,11 +1,14 @@
 import multer from "multer";
+import { v4 as uuid } from "uuid";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/image");
+    const dir = `./public/${file.fieldname}`;
+    cb(null, dir);
   },
   filename: (req, file, cb) => {
-    cb(null, file.originalname);
+    const ext = file.originalname.split(".").pop();
+    cb(null, uuid().toString() + `.${ext}`);
   },
 });
 
