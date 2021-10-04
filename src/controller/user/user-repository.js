@@ -4,7 +4,7 @@ class UserRepository {
       body.user_id = session.id;
       const result = await db.query(
         `
-        update from users set email = $<email>, username = $<username>, bio = $bio> where user_id = $<user_id>
+        update users set email = $<email>, username = $<username>, bio = $<bio> where user_id = $<user_id>
         returning *
       `,
         body
