@@ -41,6 +41,16 @@ class UserController {
       return res.status(500).send({ message: error.message });
     }
   };
+
+  getFollower = async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const result = await this.repository.getFollower(this.db, userId);
+      return res.status(200).send({ result });
+    } catch (error) {
+      return res.status(500).send({ message: error.message });
+    }
+  };
 }
 
 export default UserController;
