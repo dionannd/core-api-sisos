@@ -40,8 +40,8 @@ class AuthController {
       // Insert data to Database
       await this.db.query(
         `
-        INSERT INTO users (username, email, password, profile_pic, bio ,created_at)
-        VALUES ($<username>, $<email>, $<password>, null, null, NOW())
+        INSERT INTO users (username, email, password, created_at)
+        VALUES ($<username>, $<email>, $<password>, NOW())
       `,
         body
       );
