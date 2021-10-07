@@ -72,6 +72,56 @@ class UserController {
       return res.status(500).send({ message: error.message });
     }
   };
+
+  searchUser = async (req, res) => {
+    try {
+      const { search } = req.query;
+      let where = "";
+      let bindParams = {};
+      if (search && search.length > 0) {
+        where += ` where ((email ~* $<search> or username ~* $<search>))`;
+        bindParams = { ...bindParams, search };
+      }
+      const data = await this.db.query(
+        `
+        select * from users
+        ${where}
+      `,
+        bindParams
+      );
+      return res.status(200).send({ data });
+    } catch (error) {
+      return res.status(500).send({ message: error.message });
+    }
+  };
+
+  searchFollowing = async (req, res) => {
+    try {
+      const { search } = req.query;
+      let where = "";
+      let bindParams = {
+        user_id: req.user.id,
+      };
+      if (search && search.length > 0) {
+        where += ` and ((username ~* $<search>))`;
+        bindParams = { ...bindParams, search };
+      }
+      const data = await this.db.query(
+        `
+        select u.username, u.email
+        from users u 
+        where user_id in (select followed_user_id
+        from followings f
+        where user_id = $<user_id>)
+        ${where}
+      `,
+        bindParams
+      );
+      return res.status(200).send({ data });
+    } catch (error) {
+      return res.status(500).send({ message: error.message });
+    }
+  };
 }
 
 export default UserController;
