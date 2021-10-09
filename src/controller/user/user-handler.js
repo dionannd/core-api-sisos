@@ -75,12 +75,12 @@ class UserController {
 
   searchUser = async (req, res) => {
     try {
-      const { search } = req.query;
+      const { q } = req.query;
       let where = "";
       let bindParams = {};
-      if (search && search.length > 0) {
-        where += ` where ((email ~* $<search> or username ~* $<search>))`;
-        bindParams = { ...bindParams, search };
+      if (q && q.length > 0) {
+        where += ` where ((email ~* $<q> or username ~* $<q>))`;
+        bindParams = { ...bindParams, q };
       }
       const data = await this.db.query(
         `
@@ -97,14 +97,14 @@ class UserController {
 
   searchFollowing = async (req, res) => {
     try {
-      const { search } = req.query;
+      const { q } = req.query;
       let where = "";
       let bindParams = {
         user_id: req.user.id,
       };
-      if (search && search.length > 0) {
-        where += ` and ((username ~* $<search>))`;
-        bindParams = { ...bindParams, search };
+      if (q && q.length > 0) {
+        where += ` and ((username ~* $<q>))`;
+        bindParams = { ...bindParams, q };
       }
       const data = await this.db.query(
         `
@@ -115,6 +115,34 @@ class UserController {
         where user_id = $<user_id>)
         ${where}
       `,
+        bindParams
+      );
+      return res.status(200).send({ data });
+    } catch (error) {
+      return res.status(500).send({ message: error.message });
+    }
+  };
+
+  searchFollowed = async (req, res) => {
+    try {
+      const { q } = req.query;
+      let where = "";
+      let bindParams = {
+        user_id: req.user.id,
+      };
+      if (q && q.length > 0) {
+        where += ` and ((username ~* $<q>))`;
+        bindParams = { ...bindParams, q };
+      }
+      const data = await this.db.query(
+        `
+        select u.username, u.email 
+        from users u 
+        where user_id in (select user_id 
+        from followings f
+        where followed_user_id = $<user_id>)
+        ${where} 
+    `,
         bindParams
       );
       return res.status(200).send({ data });
