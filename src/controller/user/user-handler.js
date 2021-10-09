@@ -75,20 +75,8 @@ class UserController {
 
   searchUser = async (req, res) => {
     try {
-      const { q } = req.query;
-      let where = "";
-      let bindParams = {};
-      if (q && q.length > 0) {
-        where += ` where ((email ~* $<q> or username ~* $<q>))`;
-        bindParams = { ...bindParams, q };
-      }
-      const data = await this.db.query(
-        `
-        select * from users
-        ${where}
-      `,
-        bindParams
-      );
+      const session = req;
+      const data = await this.repository.searchUser(this.db, session);
       return res.status(200).send({ data });
     } catch (error) {
       return res.status(500).send({ message: error.message });
@@ -97,26 +85,8 @@ class UserController {
 
   searchFollowing = async (req, res) => {
     try {
-      const { q } = req.query;
-      let where = "";
-      let bindParams = {
-        user_id: req.user.id,
-      };
-      if (q && q.length > 0) {
-        where += ` and ((username ~* $<q>))`;
-        bindParams = { ...bindParams, q };
-      }
-      const data = await this.db.query(
-        `
-        select u.username, u.email
-        from users u 
-        where user_id in (select followed_user_id
-        from followings f
-        where user_id = $<user_id>)
-        ${where}
-      `,
-        bindParams
-      );
+      const session = req;
+      const data = await this.repository.searchUserFollow(this.db, session);
       return res.status(200).send({ data });
     } catch (error) {
       return res.status(500).send({ message: error.message });
@@ -125,26 +95,8 @@ class UserController {
 
   searchFollowed = async (req, res) => {
     try {
-      const { q } = req.query;
-      let where = "";
-      let bindParams = {
-        user_id: req.user.id,
-      };
-      if (q && q.length > 0) {
-        where += ` and ((username ~* $<q>))`;
-        bindParams = { ...bindParams, q };
-      }
-      const data = await this.db.query(
-        `
-        select u.username, u.email 
-        from users u 
-        where user_id in (select user_id 
-        from followings f
-        where followed_user_id = $<user_id>)
-        ${where} 
-    `,
-        bindParams
-      );
+      const session = req;
+      const data = await this.repository.searchUserFollowed(this.db, session);
       return res.status(200).send({ data });
     } catch (error) {
       return res.status(500).send({ message: error.message });
