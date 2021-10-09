@@ -68,6 +68,84 @@ class UserRepository {
       return error;
     }
   }
+
+  async searchUser(db, session) {
+    try {
+      const { q } = session.query;
+      let where = "";
+      let bindParams = {};
+      if (q && q.length > 0) {
+        where += ` where ((email ~* $<q> or username ~* $<q>))`;
+        bindParams = { ...bindParams, q };
+      }
+      const result = await db.query(
+        `
+        select * from users
+        ${where}
+      `,
+        bindParams
+      );
+      return result;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async searchUserFollow(db, session) {
+    try {
+      const { q } = session.query;
+      let where = "";
+      let bindParams = {
+        user_id: session.user.id,
+      };
+      if (q && q.length > 0) {
+        where += ` and ((username ~* $<q>))`;
+        bindParams = { ...bindParams, q };
+      }
+      const result = await db.query(
+        `
+        select u.username, u.email
+        from users u 
+        where user_id in (select followed_user_id
+        from followings f
+        where user_id = $<user_id>)
+        ${where}
+      `,
+        bindParams
+      );
+      return result;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async searchUserFollowed(db, session) {
+    try {
+      const { q } = session.query;
+      let where = "";
+      let bindParams = {
+        user_id: session.user.id,
+      };
+      if (q && q.length > 0) {
+        where += ` and ((username ~* $<q>))`;
+        bindParams = { ...bindParams, q };
+      }
+      const result = await db.query(
+        `
+        select u.username, u.email 
+        from users u 
+        where user_id in (select user_id 
+        from followings f
+        where followed_user_id = $<user_id>)
+        ${where} 
+    `,
+        bindParams
+      );
+      return result;
+    } catch (error) {
+      return error;
+    }
+  }
 }
 
 export default UserRepository;

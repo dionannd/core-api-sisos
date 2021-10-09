@@ -72,6 +72,36 @@ class UserController {
       return res.status(500).send({ message: error.message });
     }
   };
+
+  searchUser = async (req, res) => {
+    try {
+      const session = req;
+      const data = await this.repository.searchUser(this.db, session);
+      return res.status(200).send({ data });
+    } catch (error) {
+      return res.status(500).send({ message: error.message });
+    }
+  };
+
+  searchFollowing = async (req, res) => {
+    try {
+      const session = req;
+      const data = await this.repository.searchUserFollow(this.db, session);
+      return res.status(200).send({ data });
+    } catch (error) {
+      return res.status(500).send({ message: error.message });
+    }
+  };
+
+  searchFollowed = async (req, res) => {
+    try {
+      const session = req;
+      const data = await this.repository.searchUserFollowed(this.db, session);
+      return res.status(200).send({ data });
+    } catch (error) {
+      return res.status(500).send({ message: error.message });
+    }
+  };
 }
 
 export default UserController;
