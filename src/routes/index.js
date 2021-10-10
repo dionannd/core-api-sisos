@@ -6,6 +6,7 @@ import posting from "../controller/posting";
 import comment from "../controller/comment";
 import like from "../controller/like";
 import follow from "../controller/follow";
+import home from "../controller/home";
 
 const app = Router();
 
@@ -15,5 +16,6 @@ app.use("/posting", verify, posting);
 app.use("/comment", verify, comment);
 app.use("/like", verify, like);
 app.use("/follow", verify, follow);
+app.use("/home", verify, home);
 
 export default app;
