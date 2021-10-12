@@ -58,13 +58,13 @@ class AuthController {
 
       // Check Email from DB
       const checkUser = await this.db.oneOrNone(
-        `SELECT * FROM users WHERE email = $1`,
-        body.email
+        `SELECT * FROM users WHERE email = $1 or username = $1`,
+        [body.username]
       );
       // Check Email if not exists
       if (!checkUser) {
         return res.status(400).send({
-          message: "Email yang anda masukan salah atau belum terdaftar!",
+          message: "Email/username salah atau belum terdaftar!",
         });
       }
       const comparePassword = Bcrypt.compareSync(
