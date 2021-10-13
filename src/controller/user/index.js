@@ -5,6 +5,7 @@ import { upload } from "../../lib/upload-lib";
 const app = Router();
 const handler = new UserController();
 
+app.get("/", handler.verify);
 app.get("/search", handler.searchUser);
 app.get("/following/search", handler.searchFollowing);
 app.get("/followed/search", handler.searchFollowed);

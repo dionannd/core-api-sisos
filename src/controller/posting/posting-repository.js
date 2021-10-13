@@ -31,13 +31,15 @@ class PostingRepository {
     return db.query(
       `
       select
-        *,
+        post_id, content, image, u.user_id, u.profil_pic, u.username,
         (select count(*) from likes l where l.post_id = up.post_id) as total_like,
-        (select count(*) from "comments" c where c.post_id = up.post_id) as total_comment
+        (select count(*) from "comments" c where c.post_id = up.post_id) as total_comment,
+        up.created_at
       from
         user_posts up
+        left join users u on u.user_id = up.user_id
       where
-        user_id in (
+       up.user_id in (
         select
           followed_user_id
         from
