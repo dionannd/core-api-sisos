@@ -8,6 +8,7 @@ export const generateToken = async (user) => {
     id: user.user_id,
     email: user.email,
     username: user.username,
+    profil_pic: user.profil_pic,
   };
 
   return jwt.sign(payload, JWT.secretKey, {

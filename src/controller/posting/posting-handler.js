@@ -14,6 +14,7 @@ class PostingController {
       const mapResult = result.map((item) => {
         return {
           ...item,
+          profil_pic: `http://localhost:8000/image/${item.profil_pic}`,
           image: `http://localhost:8000/image_posting/${item.image}`,
         };
       });

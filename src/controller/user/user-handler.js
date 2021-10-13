@@ -102,6 +102,21 @@ class UserController {
       return res.status(500).send({ message: error.message });
     }
   };
+
+  verify = async (req, res) => {
+    try {
+      const data = {
+        user_id: req.user.id,
+        email: req.user.email,
+        username: req.user.username,
+        profil_pic: req.user.profil_pic,
+      };
+      console.log(data);
+      return res.status(200).send({ data });
+    } catch (error) {
+      return res.status(500).send({ message: error.message });
+    }
+  };
 }
 
 export default UserController;
