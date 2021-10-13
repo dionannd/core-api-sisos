@@ -56,6 +56,36 @@ class PostingRepository {
       session
     );
   }
+
+  async getDetailPosting(db, postId) {
+    try {
+      const detail = await db.oneOrNone(
+        `
+      select u.username, u.profil_pic, up.content, up.created_at, up.post_id
+      from user_posts up
+      join users u on u.user_id = up.user_id
+      where post_id = $1
+    `,
+        postId
+      );
+
+      const comments = await db.query(
+        `
+        select comment_id, u.username, u.profil_pic, c.content, c.user_id, 
+          c.created_at, c.user_id, c.post_id
+        from comments c
+        join users u on u.user_id = c.user_id
+        where post_id = $1
+      `,
+        postId
+      );
+      console.log(detail, comments);
+      return { detail, comments };
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
 }
 
 export default PostingRepository;
