@@ -18,7 +18,7 @@ class LikeRepository {
     try {
       return db.query(
         `
-        delete from likes where like_id = $1
+        delete from likes where post_id = $1
       `,
         likeId
       );

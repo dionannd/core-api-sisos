@@ -34,6 +34,10 @@ class PostingRepository {
         post_id, content, image, u.user_id, u.profil_pic, u.username,
         (select count(*) from likes l where l.post_id = up.post_id) as total_like,
         (select count(*) from "comments" c where c.post_id = up.post_id) as total_comment,
+        (select 
+          case when count(*) > 0 then true else false end
+        from likes l where l.post_id = up.post_id and l.user_id = $1
+        ) as has_you_like,
         up.created_at
       from
         user_posts up
@@ -46,7 +50,8 @@ class PostingRepository {
           followings f
         where
           user_id = $1
-      )
+      ) or up.user_id = $1
+      order by created_at desc
     `,
       session
     );
