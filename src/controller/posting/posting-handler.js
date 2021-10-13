@@ -41,6 +41,26 @@ class PostingController {
       return res.status(500).send({ message: error.message });
     }
   };
+
+  getDetail = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { detail, comments } = await this.repository.getDetailPosting(
+        this.db,
+        id
+      );
+      detail.profil_pic = `http://localhost:8000/image/${detail.profil_pic}`;
+      const mapComments = comments.map((item) => {
+        return {
+          ...item,
+          profil_pic: `http://localhost:8000/image/${item.profil_pic}`,
+        };
+      });
+      return res.status(200).send({ detail, comments: mapComments });
+    } catch (error) {
+      return res.status(500).send({ message: error.message });
+    }
+  };
 }
 
 export default PostingController;
