@@ -14,13 +14,13 @@ class LikeRepository {
     }
   }
 
-  async deletePostingLike(db, likeId) {
+  async deletePostingLike(db, likeId, session) {
     try {
       return db.query(
         `
-        delete from likes where post_id = $1
+        delete from likes where post_id = $1 and user_id = $2
       `,
-        likeId
+        [likeId, session.id]
       );
     } catch (error) {
       return error;
