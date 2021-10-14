@@ -22,7 +22,6 @@ class PostingRepository {
 
       return Promise.resolve(result);
     } catch (error) {
-      console.log(error);
       return Promise.reject(error);
     }
   }
@@ -79,10 +78,8 @@ class PostingRepository {
       `,
         postId
       );
-      console.log(detail, comments);
       return { detail, comments };
     } catch (error) {
-      console.log(error);
       return error;
     }
   }
