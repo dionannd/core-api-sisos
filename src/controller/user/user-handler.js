@@ -1,7 +1,7 @@
 import { mainDb } from "../../lib/database";
 import UserRepository from "./user-repository";
 import Bcrypt from "bcrypt";
-
+import config from "../../config"
 class UserController {
   constructor() {
     this.db = mainDb;
@@ -109,7 +109,7 @@ class UserController {
         user_id: req.user.id,
         email: req.user.email,
         username: req.user.username,
-        profil_pic: req.user.profil_pic,
+        profil_pic: `${config.APP_URL}/image/${req.user.profil_pic}`,
       };
       console.log(data);
       return res.status(200).send({ data });

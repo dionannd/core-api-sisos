@@ -15,7 +15,7 @@ class PostingController {
         return {
           ...item,
           profil_pic: `http://localhost:8000/image/${item.profil_pic}`,
-          image: `http://localhost:8000/image_posting/${item.image}`,
+          image: item.image ? `http://localhost:8000/image_posting/${item.image}` : null,
         };
       });
       return res.status(200).send({ data: mapResult });

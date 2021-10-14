@@ -20,7 +20,7 @@ class LikeController {
 
   deletePostingLike = async (req, res) => {
     try {
-      await this.repository.deletePostingLike(this.db, req.params.id);
+      await this.repository.deletePostingLike(this.db, req.params.id, req.user);
       return res.status(200).send({ message: "ok" });
     } catch (error) {
       return res.status(500).send({ message: error.message });

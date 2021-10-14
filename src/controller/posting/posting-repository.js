@@ -75,7 +75,7 @@ class PostingRepository {
           c.created_at, c.user_id, c.post_id
         from comments c
         join users u on u.user_id = c.user_id
-        where post_id = $1
+        where post_id = $1 order by c.created_at desc
       `,
         postId
       );
