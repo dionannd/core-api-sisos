@@ -7,6 +7,25 @@ class PostingController {
     this.repository = new PostingRepository();
   }
 
+  getPostingSelf = async (req, res) => {
+    try {
+      const session = req.user.id;
+      const result = await this.repository.getPostingSelf(this.db, session);
+      const mapResult = result.map((item) => {
+        return {
+          ...item,
+          profil_pic: `http://localhost:8000/image/${item.profil_pic}`,
+          image: item.image
+            ? `http://localhost:8000/image_posting/${item.image}`
+            : null,
+        };
+      });
+      return res.status(200).send({ data: mapResult });
+    } catch (error) {
+      return res.status(500).send({ message: error.message });
+    }
+  };
+
   getUserPosting = async (req, res) => {
     try {
       const session = req.user.id;
@@ -15,7 +34,9 @@ class PostingController {
         return {
           ...item,
           profil_pic: `http://localhost:8000/image/${item.profil_pic}`,
-          image: item.image ? `http://localhost:8000/image_posting/${item.image}` : null,
+          image: item.image
+            ? `http://localhost:8000/image_posting/${item.image}`
+            : null,
         };
       });
       return res.status(200).send({ data: mapResult });

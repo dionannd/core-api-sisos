@@ -1,4 +1,32 @@
 class PostingRepository {
+  async getPostingSelf(db, session) {
+    try {
+      const result = await db.query(
+        `
+        select
+        post_id, content, image, u.user_id, u.profil_pic, u.username,
+        (select count(*) from likes l where l.post_id = up.post_id) as total_like,
+        (select count(*) from "comments" c where c.post_id = up.post_id) as total_comment,
+        (select 
+          case when count(*) > 0 then true else false end
+        from likes l where l.post_id = up.post_id and l.user_id = $1
+        ) as has_you_like,
+        up.created_at
+      from
+        user_posts up
+        left join users u on u.user_id = up.user_id
+      where
+       up.user_id = $1
+      order by created_at desc 
+      `,
+        session
+      );
+      return Promise.resolve(result);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
   async createPosting(db, session, body, file) {
     try {
       body.user_id = session.id;
