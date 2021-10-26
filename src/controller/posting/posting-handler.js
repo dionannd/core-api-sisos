@@ -9,7 +9,7 @@ class PostingController {
 
   getPostingSelf = async (req, res) => {
     try {
-      const session = req.user.id;
+      const session = req.params.id;
       const result = await this.repository.getPostingSelf(this.db, session);
       const mapResult = result.map((item) => {
         return {
@@ -78,6 +78,16 @@ class PostingController {
         };
       });
       return res.status(200).send({ detail, comments: mapComments });
+    } catch (error) {
+      return res.status(500).send({ message: error.message });
+    }
+  };
+
+  deletePosting = async (req, res) => {
+    try {
+      const { id } = req.params;
+      await this.repository.deletePosting(this.db, id);
+      return res.status(200).send({ message: "ok" });
     } catch (error) {
       return res.status(500).send({ message: error.message });
     }
