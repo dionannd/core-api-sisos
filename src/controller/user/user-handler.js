@@ -8,6 +8,16 @@ class UserController {
     this.repository = new UserRepository();
   }
 
+  getStats = async (req, res) => {
+    try {
+      const userUsername = req.params.username;
+      const result = await this.repository.getStats(this.db, userUsername);
+      return res.status(200).send({ data: result });
+    } catch (error) {
+      return res.status(500).send({ message: error.message });
+    }
+  };
+
   editUser = async (req, res) => {
     try {
       const { body } = req;
@@ -25,16 +35,6 @@ class UserController {
       const session = req.user.id;
       const result = await this.repository.uploadImage(this.db, session, body);
       return res.status(200).send({ message: "ok", result });
-    } catch (error) {
-      return res.status(500).send({ message: error.message });
-    }
-  };
-
-  getFollower = async (req, res) => {
-    try {
-      const userId = req.params.id;
-      const result = await this.repository.getFollower(this.db, userId);
-      return res.status(200).send({ result });
     } catch (error) {
       return res.status(500).send({ message: error.message });
     }

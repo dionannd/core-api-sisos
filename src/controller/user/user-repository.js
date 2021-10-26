@@ -15,17 +15,18 @@ class UserRepository {
     }
   }
 
-  async getFollower(db, userId) {
+  async getStats(db, userUsername) {
     try {
       const result = await db.one(
         `
-        select username, 
-        (select count(*) from followings f where f.user_id = $1) as total_following,
-        (select count(*) from followings f where f.followed_user_id = $1) as total_follower
+        select *,
+        (select count(*) from user_posts up where up.user_id = u.user_id) as total_post, 
+        (select count(*) from followings f where f.user_id = u.user_id) as total_following,
+        (select count(*) from followings f where f.followed_user_id = u.user_id) as total_follower
         from users u 
-        where user_id = $1
+        where username = $1
       `,
-        userId
+        userUsername
       );
       return result;
     } catch (error) {

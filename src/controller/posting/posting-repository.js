@@ -102,11 +102,25 @@ class PostingRepository {
           c.created_at, c.user_id, c.post_id
         from comments c
         join users u on u.user_id = c.user_id
-        where post_id = $1 order by c.created_at desc
+        where post_id = $1 order by c.created_at asc
       `,
         postId
       );
       return { detail, comments };
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async deletePosting(db, id) {
+    try {
+      const result = await db.query(
+        `
+        delete from user_posts where post_id = $1
+      `,
+        id
+      );
+      return result;
     } catch (error) {
       return error;
     }
