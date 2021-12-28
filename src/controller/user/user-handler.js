@@ -12,6 +12,7 @@ class UserController {
     try {
       const userUsername = req.params.username;
       const result = await this.repository.getStats(this.db, userUsername);
+      result.profil_pic = `http://localhost:8000/image/${result.profil_pic}`;
       return res.status(200).send({ data: result });
     } catch (error) {
       return res.status(500).send({ message: error.message });
@@ -109,6 +110,8 @@ class UserController {
         user_id: req.user.id,
         email: req.user.email,
         username: req.user.username,
+        fullname: req.user.fullname,
+        bio: req.user.bio,
         profil_pic: `${config.APP_URL}/image/${req.user.profil_pic}`,
       };
       return res.status(200).send({ data });

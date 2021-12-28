@@ -7,6 +7,15 @@ class PostingRepository {
         post_id, content, image, u.user_id, u.profil_pic, u.username,
         (select count(*) from likes l where l.post_id = up.post_id) as total_like,
         (select count(*) from "comments" c where c.post_id = up.post_id) as total_comment,
+        (
+          select array_to_json(array_agg(a))
+            from (
+              select * from "comments" c2
+              join users u2 on u2.user_id = c2.user_id
+              where c2.post_id = up.post_id
+              order by c2.created_at desc limit 1
+            ) a
+        ) as comment,
         (select 
           case when count(*) > 0 then true else false end
         from likes l where l.post_id = up.post_id and l.user_id = $1
@@ -61,6 +70,15 @@ class PostingRepository {
         post_id, content, image, u.user_id, u.profil_pic, u.username,
         (select count(*) from likes l where l.post_id = up.post_id) as total_like,
         (select count(*) from "comments" c where c.post_id = up.post_id) as total_comment,
+        (
+          select array_to_json(array_agg(a))
+            from (
+              select u2.username, u2.profil_pic, c2.content from "comments" c2 
+              join users u2 on u2.user_id = c2.user_id
+              where c2.post_id = up.post_id
+              order by c2.created_at desc limit 1
+            ) a
+        ) as comment,
         (select 
           case when count(*) > 0 then true else false end
         from likes l where l.post_id = up.post_id and l.user_id = $1
@@ -88,7 +106,12 @@ class PostingRepository {
     try {
       const detail = await db.oneOrNone(
         `
-      select u.username, u.profil_pic, up.content, up.created_at, up.post_id
+      select u.username, u.profil_pic, up.image, up.content, up.created_at, up.post_id,
+      (select count(*) from likes l where l.post_id = up.post_id) as total_like,
+      (select 
+        case when count(*) > 0 then true else false end
+        from likes l where l.post_id = up.post_id and l.user_id = $1
+      ) as has_you_like
       from user_posts up
       join users u on u.user_id = up.user_id
       where post_id = $1

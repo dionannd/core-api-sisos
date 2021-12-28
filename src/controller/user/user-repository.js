@@ -4,7 +4,7 @@ class UserRepository {
       body.user_id = session.id;
       const result = await db.query(
         `
-        update users set email = $<email>, username = $<username>, bio = $<bio> where user_id = $<user_id>
+        update users set email = $<email>, username = $<username>, fullname = $<fullname>, bio = $<bio> where user_id = $<user_id>
         returning *
       `,
         body
@@ -19,7 +19,7 @@ class UserRepository {
     try {
       const result = await db.one(
         `
-        select *,
+        select user_id, username, fullname, profil_pic, bio,
         (select count(*) from user_posts up where up.user_id = u.user_id) as total_post, 
         (select count(*) from followings f where f.user_id = u.user_id) as total_following,
         (select count(*) from followings f where f.followed_user_id = u.user_id) as total_follower
