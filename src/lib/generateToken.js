@@ -8,6 +8,8 @@ export const generateToken = async (user) => {
     id: user.user_id,
     email: user.email,
     username: user.username,
+    fulllname: user.fulllname,
+    bio: user.bio,
     profil_pic: user.profil_pic,
   };
 

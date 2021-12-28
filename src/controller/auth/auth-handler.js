@@ -10,6 +10,23 @@ class AuthController {
   register = async (req, res) => {
     try {
       const { body } = req;
+      if (body.email === "") {
+        return res
+          .status(400)
+          .send({ message: "Alamat Email tidak boleh kosong!" });
+      } else if (body.fullname === "") {
+        return res
+          .status(400)
+          .send({ message: "Nama lengkap tidak boleh kosong!" });
+      } else if (body.username === "") {
+        return res
+          .status(400)
+          .send({ message: "Nama pengguna tidak boleh kosong!" });
+      } else if (body.password === "") {
+        return res
+          .status(400)
+          .send({ message: "Kata sandi tidak boleh kosong!" });
+      }
       // Check Email from DB
       const checkEmail = await this.db.oneOrNone(
         `
@@ -29,7 +46,8 @@ class AuthController {
       // Check Email && Username if exists
       if (checkEmail) {
         return res.status(400).send({ message: "Email sudah terdaftar!" });
-      } else if (checkUsername) {
+      }
+      if (checkUsername) {
         return res.status(400).send({ message: "Username sudah digunakan!" });
       }
 
@@ -40,8 +58,8 @@ class AuthController {
       // Insert data to Database
       await this.db.query(
         `
-        INSERT INTO users (username, email, password, created_at)
-        VALUES ($<username>, $<email>, $<password>, NOW())
+        INSERT INTO users (fullname, username, email, password, created_at)
+        VALUES ($<fullname>, $<username>, $<email>, $<password>, NOW())
       `,
         body
       );

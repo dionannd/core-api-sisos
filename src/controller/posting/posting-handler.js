@@ -37,8 +37,13 @@ class PostingController {
           image: item.image
             ? `http://localhost:8000/image_posting/${item.image}`
             : null,
+          comment: item.comment.map((c) => ({
+            ...c,
+            profil_pic: `http://localhost:8000/image/${c.profil_pic}`,
+          }))[0],
         };
       });
+
       return res.status(200).send({ data: mapResult });
     } catch (error) {
       return res.status(500).send({ message: error.message });
@@ -71,6 +76,9 @@ class PostingController {
         id
       );
       detail.profil_pic = `http://localhost:8000/image/${detail.profil_pic}`;
+      if (detail.image !== null) {
+        detail.image = `http://localhost:8000/image_posting/${detail.image}`;
+      }
       const mapComments = comments.map((item) => {
         return {
           ...item,
